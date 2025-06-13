@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>Dnevi brez intervencije</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      background-color: #ffffff;
+      border: 3px solid #dc3545;
+      border-radius: 15px;
+      display: inline-block;
+      padding: 30px 50px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .days {
+      font-size: 80px;
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .details {
+      font-size: 16px;
+      color: #333333;
+    }
+    table {
+      margin: 50px auto;
+      border-collapse: collapse;
+      width: 90%;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #f1f1f1;
+      color: red;
+    }
+    td, th {
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="label">🧯 DNEVI BREZ INTERVENCIJE</div>
+    <div class="days" id="days-count">...</div>
+    <div class="details">
+      Zadnji izvoz: <strong><span id="last-date">...</span></strong>
+    </div>
+  </div>
+
+  <table id="incident-table">
+    <thead>
+      <tr>
+        <th>#</th><th>Datum</th><th>TIP</th><th>DOGODEK</th><th>Lokacija</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>08</td><td>11.05.2025</td><td>PPo</td><td>AED - Infarkt/nezavest</td><td>Ravne</td></tr>
+      <tr><td>07</td><td>18.04.2025</td><td>PPo</td><td>AED - Nezavest</td><td>Apno</td></tr>
+      <tr><td>06</td><td>16.04.2025</td><td>PPo</td><td>Oseba ujeta v drsna vrata</td><td>Zalog</td></tr>
+      <tr><td>05</td><td>06.02.2025</td><td>TEH</td><td>Pogresana oseba</td><td>GZ Cerklje</td></tr>
+      <tr><td>04</td><td>31.01.2025</td><td>PPo</td><td>Padec kolesarja</td><td>Šmartno</td></tr>
+      <tr><td>03</td><td>30.01.2025</td><td>PPo</td><td>AED - srcni zastoj</td><td>Zgornji Brnik</td></tr>
+      <tr><td>02</td><td>22.01.2025</td><td>POŽ</td><td>Požar brunarice</td><td>Zalog - Trata</td></tr>
+      <tr><td>01</td><td>18.01.2025</td><td>PPo</td><td>AED - srcni zastoj</td><td>Zgornji Brnik</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    function parseDate(dateStr) {
+      const [day, month, year] = dateStr.split(".");
+      return new Date(`${year}-${month}-${day}`);
+    }
+
+    function toDateOnly(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    const rows = document.querySelectorAll("#incident-table tbody tr");
+    const dates = [];
+
+    rows.forEach(row => {
+      const dateCell = row.cells[1];
+      if (dateCell) {
+        const dateText = dateCell.textContent.trim();
+        if (dateText.match(/^\d{2}\.\d{2}\.\d{4}$/)) {
+          const date = parseDate(dateText);
+          dates.push(date);
+        }
+      }
+    });
+
+    if (dates.length > 0) {
+      const latest = new Date(Math.max(...dates.map(d => d.getTime())));
+      const today = toDateOnly(new Date());
+      const diffTime = today - toDateOnly(latest);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      document.getElementById("days-count").textContent = diffDays;
+      document.getElementById("last-date").textContent = latest.toLocaleDateString("sl-SI");
+    } else {
+      document.getElementById("days-count").textContent = "Ni podatkov";
+      document.getElementById("last-date").textContent = "-";
+    }
+  </script>
+</body>
+</html>
